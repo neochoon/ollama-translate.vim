@@ -1,0 +1,27 @@
+Execute (ParseResponse: extracts text from a well-formed Ollama response):
+  let g:result = ollama_translate#ParseResponse('{"response": "안녕하세요", "done": true}')
+
+Then:
+  AssertEqual 1, g:result.ok
+  AssertEqual '안녕하세요', g:result.text
+
+Execute (ParseResponse: returns ok=0 on malformed JSON):
+  let g:result = ollama_translate#ParseResponse('not valid json {{{')
+
+Then:
+  AssertEqual 0, g:result.ok
+  AssertEqual 1, has_key(g:result, 'error')
+
+Execute (ParseResponse: returns ok=0 when "response" field is missing):
+  let g:result = ollama_translate#ParseResponse('{"done": true}')
+
+Then:
+  AssertEqual 0, g:result.ok
+  AssertEqual 1, has_key(g:result, 'error')
+
+Execute (ParseResponse: returns ok=0 when "response" field is not a string):
+  let g:result = ollama_translate#ParseResponse('{"response": 123}')
+
+Then:
+  AssertEqual 0, g:result.ok
+  AssertEqual 1, has_key(g:result, 'error')
