@@ -1,0 +1,2 @@
+Execute (sanity check: vader itself runs):
+  AssertEqual 1 + 1, 2
