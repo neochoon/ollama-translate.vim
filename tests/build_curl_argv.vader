@@ -1,0 +1,6 @@
+Execute (BuildCurlArgv: builds the expected curl argv):
+  let g:result = ollama_translate#BuildCurlArgv('http://localhost:11434', '{"a":1}')
+
+Then:
+  AssertEqual ['curl', '-sS', '-f', '-X', 'POST',
+        \ 'http://localhost:11434/api/generate', '-d', '{"a":1}'], g:result

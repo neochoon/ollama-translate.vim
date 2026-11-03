@@ -25,3 +25,7 @@ function! ollama_translate#ParseResponse(json_str) abort
 
   return {'ok': 1, 'text': decoded.response}
 endfunction
+
+function! ollama_translate#BuildCurlArgv(host, payload) abort
+  return ['curl', '-sS', '-f', '-X', 'POST', a:host . '/api/generate', '-d', a:payload]
+endfunction
