@@ -42,6 +42,9 @@ keep it as a file.
 On failure (Ollama not running, timeout, unexpected response), an error is
 shown on the status line and no split is opened.
 
+Note: the entire buffer is sent as-is to the configured
+`g:ollama_translate_host` — only point this at a host you trust.
+
 ## Development
 
 Run the test suite (fetches vader.vim on first run):

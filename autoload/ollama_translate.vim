@@ -58,6 +58,12 @@ function! ollama_translate#Translate() abort
         \ 'out_cb': function('s:OnOllamaOut'),
         \ 'close_cb': function('s:OnOllamaClose'),
         \ })
+  if job_status(job) ==# 'fail'
+    echohl ErrorMsg
+    echomsg 'Ollama translate: failed to start curl'
+    echohl None
+    return
+  endif
   let s:active_job = job
   let s:timer = timer_start(timeout_ms, function('s:OnOllamaTimeout', [job]))
 endfunction
@@ -70,7 +76,9 @@ function! s:OnOllamaTimeout(job, timer) abort
   if job_status(a:job) ==# 'run'
     let s:timed_out = 1
     call job_stop(a:job)
-    echoerr 'Ollama translate: timed out waiting for a response'
+    echohl ErrorMsg
+    echomsg 'Ollama translate: timed out waiting for a response'
+    echohl None
   endif
 endfunction
 
@@ -83,17 +91,20 @@ function! s:OnOllamaClose(channel) abort
   endif
 
   let job = ch_getjob(a:channel)
-  call job_status(job)
   let status = job_info(job).exitval
 
   if status != 0
-    echoerr 'Ollama translate: request failed (curl exit code ' . status . ')'
+    echohl ErrorMsg
+    echomsg 'Ollama translate: request failed (curl exit code ' . status . ')'
+    echohl None
     return
   endif
 
   let result = ollama_translate#ParseResponse(join(s:job_output, "\n"))
   if !result.ok
-    echoerr 'Ollama translate: ' . result.error
+    echohl ErrorMsg
+    echomsg 'Ollama translate: ' . result.error
+    echohl None
     return
   endif
 
