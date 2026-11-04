@@ -1,0 +1,22 @@
+Execute (BuildRequest: includes model and stream:false):
+  let g:result = ollama_translate#BuildRequest('hello', 'ko', 'llama3.1')
+  let g:decoded = json_decode(g:result)
+
+Then:
+  AssertEqual 'llama3.1', g:decoded.model
+  AssertEqual v:false, g:decoded.stream
+
+Execute (BuildRequest: prompt mentions target language and contains the source text):
+  let g:result = ollama_translate#BuildRequest('hello world', 'ko', 'llama3.1')
+  let g:decoded = json_decode(g:result)
+
+Then:
+  AssertEqual 1, g:decoded.prompt =~# 'ko'
+  AssertEqual 1, g:decoded.prompt =~# 'hello world'
+
+Execute (BuildRequest: preserves newlines in multi-line source text):
+  let g:result = ollama_translate#BuildRequest("line one\nline two", 'ko', 'llama3.1')
+  let g:decoded = json_decode(g:result)
+
+Then:
+  AssertEqual 1, g:decoded.prompt =~# "line one\nline two"
