@@ -1,0 +1,26 @@
+Before:
+  if exists('g:loaded_ollama_translate')
+    unlet g:loaded_ollama_translate
+  endif
+  silent! nunmap <leader>tr
+  silent! nunmap <Plug>(ollama-translate)
+
+Execute (plugin registers the :OllamaTranslate command):
+  source plugin/ollama-translate.vim
+
+Then:
+  AssertEqual 2, exists(':OllamaTranslate')
+
+Execute (plugin maps <leader>tr to the <Plug> mapping by default):
+  source plugin/ollama-translate.vim
+
+Then:
+  AssertEqual 1, maparg('<leader>tr', 'n') =~# 'ollama-translate'
+
+Execute (sourcing the plugin twice is a no-op the second time):
+  source plugin/ollama-translate.vim
+  let g:loaded_ollama_translate_before = g:loaded_ollama_translate
+  source plugin/ollama-translate.vim
+
+Then:
+  AssertEqual g:loaded_ollama_translate_before, g:loaded_ollama_translate
